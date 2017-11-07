@@ -1,0 +1,19 @@
+{
+  "name": "amazing-college-theme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DSMuchu/Amazing-College.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DSMuchu/Amazing-College/issues"
+  },
+  "homepage": "https://github.com/DSMuchu/Amazing-College#readme"
+}
