@@ -2,7 +2,7 @@
 
 function college_files() {
 wp_enqueue_script('main-college-js',
-get_theme_file_uri('/js/scripts-bundled.js'), NULL, '1.0', true);
+get_theme_file_uri('/js/scripts-bundled.js'), NULL, strval(rand(1, 1000)), true);
 wp_enqueue_style('custom-google-fonts',
 '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
 wp_enqueue_style('font-awsome',
@@ -22,4 +22,6 @@ function college_features() {
   add_theme_support('title-tag');
 }
 
-  add_action('after_setup_theme', 'college_features'); ?>
+  add_action('after_setup_theme', 'college_features');
+
+   ?>

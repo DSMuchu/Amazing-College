@@ -10,16 +10,16 @@ while(have_posts()) {
   </div>
       <div class="page-banner__content container container--narrow">
         <h1 class="page-banner__title"><?php the_title(); ?></h1>
-        <div class="page-banner__intro"> <p>Subtitle</p></div>
+        <div class="page-banner__intro"> <p>Keep Up with Our Latest News.</p></div>
       </div>
   </div>
   <div class="container container--narrow page-section">
-    <div class="metabox metabox--position-up metabox--with-home-link"> <p><a
-    class="metabox__blog-home-link" href="<?php echo site_url('/blog'); ?>"><i
-    class="fa fa-home" aria-hidden="true"></i> Blog Home </a> <span class="metabox__main">Posted by <?php the_author_posts_link(); ?> on <?php the_time('M j, Y g:i a'); ?> in <?php echo get_the_category_list(', '); ?></span></p> </div>
-    <!-- <div class="metabox">
-      <p>Posted by <?php the_author_posts_link(); ?> on <?php the_time('M j, Y g:i a'); ?> in <?php echo get_the_category_list(', '); ?></p>
-    </div> -->
+    <div class="metabox metabox--position-up metabox--with-home-link"> <p>
+      <a class="metabox__blog-home-link" href="<?php echo site_url('/blog'); ?>">
+      <i class="fa fa-home" aria-hidden="true"></i> Blog Home </a>
+      <span class="metabox__main">Posted by <?php the_author_posts_link(); ?> on
+        <?php the_time('M j, Y g:i a'); ?> in <?php echo get_the_category_list(', '); ?></span></p> </div>
+
     <div class="generic-content"><?php the_content(); ?></div>
   </div>
   <?php
