@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10338,6 +10338,130 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var GMap = function () {
+  function GMap() {
+    _classCallCheck(this, GMap);
+
+    var self = this;
+    (0, _jquery2.default)('.acf-map').each(function () {
+      self.new_map((0, _jquery2.default)(this));
+    });
+  } // end constructor
+
+  _createClass(GMap, [{
+    key: 'new_map',
+    value: function new_map($el) {
+
+      // var
+      var $markers = $el.find('.marker');
+
+      // vars
+      var args = {
+        zoom: 16,
+        center: new google.maps.LatLng(0, 0),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+
+      // create map
+      var map = new google.maps.Map($el[0], args);
+
+      // add a markers reference
+      map.markers = [];
+
+      var that = this;
+
+      // add markers
+      $markers.each(function () {
+        that.add_marker((0, _jquery2.default)(this), map);
+      });
+
+      // center map
+      this.center_map(map);
+    } // end new_map
+
+  }, {
+    key: 'add_marker',
+    value: function add_marker($marker, map) {
+
+      // var
+      var latlng = new google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
+
+      var marker = new google.maps.Marker({
+        position: latlng,
+        map: map
+      });
+
+      map.markers.push(marker);
+
+      // if marker contains HTML, add it to an infoWindow
+      if ($marker.html()) {
+        // create info window
+        var infowindow = new google.maps.InfoWindow({
+          content: $marker.html()
+        });
+
+        // show info window when marker is clicked
+        google.maps.event.addListener(marker, 'click', function () {
+
+          infowindow.open(map, marker);
+        });
+      }
+    } // end add_marker
+
+  }, {
+    key: 'center_map',
+    value: function center_map(map) {
+
+      // vars
+      var bounds = new google.maps.LatLngBounds();
+
+      // loop through all markers and create bounds
+      _jquery2.default.each(map.markers, function (i, marker) {
+
+        var latlng = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
+
+        bounds.extend(latlng);
+      });
+
+      // only 1 marker?
+      if (map.markers.length == 1) {
+        // set center of map
+        map.setCenter(bounds.getCenter());
+        map.setZoom(16);
+      } else {
+        // fit to bounds
+        map.fitBounds(bounds);
+      }
+    } // end center_map
+
+  }]);
+
+  return GMap;
+}();
+
+exports.default = GMap;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var HeroSlider = function () {
   function HeroSlider() {
     _classCallCheck(this, HeroSlider);
@@ -10363,7 +10487,7 @@ var HeroSlider = function () {
 exports.default = HeroSlider;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10411,7 +10535,138 @@ var MobileMenu = function () {
 exports.default = MobileMenu;
 
 /***/ }),
-/* 3 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Search = function () {
+  //1. Describe and create/initiate our object
+  function Search() {
+    _classCallCheck(this, Search);
+
+    this.addSearchHTML();
+    this.resultsDiv = (0, _jquery2.default)("#search-overlay__results");
+    this.openButton = (0, _jquery2.default)(".js-search-trigger");
+    this.closeButton = (0, _jquery2.default)(".search-overlay__close");
+    this.searchOverlay = (0, _jquery2.default)(".search-overlay");
+    this.searchField = (0, _jquery2.default)("#search-term");
+    this.events();
+    this.isOverlayOpen = false;
+    this.isSpinnerVisible = false;
+    this.previousValue;
+    this.typingTimer;
+  }
+
+  //   2. events
+
+
+  _createClass(Search, [{
+    key: "events",
+    value: function events() {
+      this.openButton.on("click", this.openOverlay.bind(this));
+      this.closeButton.on("click", this.closeOverlay.bind(this));
+      (0, _jquery2.default)(document).on("keydown", this.keyPressDispatcher.bind(this));
+      this.searchField.on("keyup", this.typingLogic.bind(this));
+    }
+
+    //3. methods (functions, actions....)
+
+  }, {
+    key: "typingLogic",
+    value: function typingLogic() {
+      if (this.searchField.val() != this.previousValue) {
+        clearTimeout(this.typingTimer);
+
+        if (this.searchField.val()) {
+          if (!this.isSpinnerVisible) {
+            this.resultsDiv.html('<div class="spinner-loader"></div>');
+            this.isSpinnerVisible = true;
+          }
+          this.typingTimer = setTimeout(this.getResults.bind(this), 750);
+        } else {
+          this.resultsDiv.html('');
+          this.isSpinnerVisible = false;
+        }
+      }
+      this.previousValue = this.searchField.val();
+    }
+  }, {
+    key: "getResults",
+    value: function getResults() {
+      var _this = this;
+
+      _jquery2.default.when(_jquery2.default.getJSON(collegeData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchField.val()), _jquery2.default.getJSON(collegeData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchField.val())).then(function (posts, pages) {
+        var combinedResults = posts[0].concat(pages[0]);
+        _this.resultsDiv.html("\n          <h2 class=\"search-overlay__section-title\">General Information</h2>\n          " + (combinedResults.length ? '<ul class="link-list min-list">' : '<p>No general information matches that search.</p>') + "\n            " + combinedResults.map(function (item) {
+          return "<li><a href=\"" + item.link + "\">" + item.title.rendered + "</a> " + (item.type == 'post' ? "by " + item.authorName : ' ') + "</li>";
+        }).join('') + "\n          " + (combinedResults.length ? '</ul>' : '') + "\n        ");
+        _this.isSpinnerVisible = false;
+      }, function () {
+        _this.resultsDiv.html('<p>Unexpected error; please try again.</p>');
+      });
+    }
+  }, {
+    key: "keyPressDispatcher",
+    value: function keyPressDispatcher(e) {
+      if (e.keyCode == 83 && !this.isOverlayOpen && !(0, _jquery2.default)("input, textarea").is(':focus')) {
+        this.openOverlay();
+      }
+      if (e.keyCode == 27 && this.isOverlayOpen) {
+        this.closeOverlay();
+      }
+    }
+  }, {
+    key: "openOverlay",
+    value: function openOverlay() {
+      var _this2 = this;
+
+      this.searchOverlay.addClass("search-overlay--active");
+      (0, _jquery2.default)("body").addClass("body-no-scroll");
+      this.searchField.val('');
+      setTimeout(function () {
+        return _this2.searchField.focus();
+      }, 301);
+      console.log("Our open method just ran");
+      this.isOverlayOpen = true;
+    }
+  }, {
+    key: "closeOverlay",
+    value: function closeOverlay() {
+      this.searchOverlay.removeClass("search-overlay--active");
+      (0, _jquery2.default)("body").removeClass("body-no-scroll");
+      console.log("Our close method just ran");
+      this.isOverlayOpen = false;
+    }
+  }, {
+    key: "addSearchHTML",
+    value: function addSearchHTML() {
+      (0, _jquery2.default)("body").append("\n      <div class=\"search-overlay\">\n        <div class=\"search-overlay__top\">\n          <div class=\"container\">\n            <i class=\"fa fa-search search-overlay__icon\" aria-hidden=\"true\"></i>\n            <input type=\"text\" class=\"search-term\" placeholder=\"What are you looking for?\" id=\"search-term\">\n            <i class=\"fa fa-window-close search-overlay__close\" aria-hidden=\"true\"></i>\n          </div>\n        </div>\n        <div class=\"container\">\n          <div id=\"search-overlay__results\"></div>\n        </div>\n\n      </div>\n      ");
+    }
+  }]);
+
+  return Search;
+}();
+
+exports.default = Search;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -13312,7 +13567,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13322,17 +13577,25 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _slickCarousel = __webpack_require__(3);
+var _slickCarousel = __webpack_require__(5);
 
 var _slickCarousel2 = _interopRequireDefault(_slickCarousel);
 
-var _MobileMenu = __webpack_require__(2);
+var _MobileMenu = __webpack_require__(3);
 
 var _MobileMenu2 = _interopRequireDefault(_MobileMenu);
 
-var _HeroSlider = __webpack_require__(1);
+var _HeroSlider = __webpack_require__(2);
 
 var _HeroSlider2 = _interopRequireDefault(_HeroSlider);
+
+var _GoogleMap = __webpack_require__(1);
+
+var _GoogleMap2 = _interopRequireDefault(_GoogleMap);
+
+var _Search = __webpack_require__(4);
+
+var _Search2 = _interopRequireDefault(_Search);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13343,6 +13606,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // 3rd party packages from NPM
 var mobileMenu = new _MobileMenu2.default();
 var heroSlider = new _HeroSlider2.default();
+var googleMap = new _GoogleMap2.default();
+var magicalSearch = new _Search2.default();
 
 /***/ })
 /******/ ]);
