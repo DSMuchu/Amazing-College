@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10507,6 +10507,107 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Like = function () {
+  function Like() {
+    _classCallCheck(this, Like);
+
+    this.events();
+  }
+
+  _createClass(Like, [{
+    key: "events",
+    value: function events() {
+      (0, _jquery2.default)(".like-box").on("click", this.ourClickDispatcher.bind(this));
+    }
+
+    // Methods
+
+  }, {
+    key: "ourClickDispatcher",
+    value: function ourClickDispatcher(e) {
+      var currentLikeBox = (0, _jquery2.default)(e.target).closest(".like-box");
+
+      if (currentLikeBox.attr('data-exists') == 'yes') {
+        this.deleteLike(currentLikeBox);
+      } else {
+        this.createLike(currentLikeBox);
+      }
+    }
+  }, {
+    key: "createLike",
+    value: function createLike(currentLikeBox) {
+      _jquery2.default.ajax({
+        beforeSend: function beforeSend(xhr) {
+          xhr.setRequestHeader('X-WP-Nonce', collegeData.nonce);
+        },
+        url: collegeData.root_url + '/wp-json/college/v1/manageLike',
+        type: 'POST',
+        data: { 'professorId': currentLikeBox.data('professor') },
+        success: function success(response) {
+          currentLikeBox.attr('data-exists', 'yes');
+          var likeCount = parseInt(currentLikeBox.find(".like-count").html(), 10);
+          likeCount++;
+          currentLikeBox.find(".like-count").html(likeCount);
+          currentLikeBox.attr("data-like", response);
+          console.log(response);
+        },
+        error: function error(response) {
+          console.log(response);
+        }
+      });
+    }
+  }, {
+    key: "deleteLike",
+    value: function deleteLike(currentLikeBox) {
+      _jquery2.default.ajax({
+        beforeSend: function beforeSend(xhr) {
+          xhr.setRequestHeader('X-WP-Nonce', collegeData.nonce);
+        },
+        url: collegeData.root_url + '/wp-json/college/v1/manageLike',
+        type: 'DELETE',
+        data: { 'like': currentLikeBox.attr('data-like') },
+        success: function success(response) {
+          currentLikeBox.attr('data-exists', 'no');
+          var likeCount = parseInt(currentLikeBox.find(".like-count").html(), 10);
+          likeCount--;
+          currentLikeBox.find(".like-count").html(likeCount);
+          currentLikeBox.attr("data-like", '');
+          console.log(response);
+        },
+        error: function error(response) {
+          // console.log("Sorry");
+          console.log(response);
+        }
+      });
+    }
+  }]);
+
+  return Like;
+}();
+
+exports.default = Like;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var MobileMenu = function () {
   function MobileMenu() {
     _classCallCheck(this, MobileMenu);
@@ -10535,7 +10636,163 @@ var MobileMenu = function () {
 exports.default = MobileMenu;
 
 /***/ }),
-/* 4 */
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MyNotes = function () {
+  function MyNotes() {
+    _classCallCheck(this, MyNotes);
+
+    this.events();
+  }
+
+  _createClass(MyNotes, [{
+    key: "events",
+    value: function events() {
+      (0, _jquery2.default)("#my-notes").on("click", ".delete-note", this.deleteNote);
+      (0, _jquery2.default)("#my-notes").on("click", ".edit-note", this.editNote.bind(this));
+      (0, _jquery2.default)("#my-notes").on("click", ".update-note", this.updateNote.bind(this));
+      (0, _jquery2.default)(".submit-note").on("click", this.createNote.bind(this));
+    }
+
+    // Methods will go here
+
+  }, {
+    key: "editNote",
+    value: function editNote(e) {
+      var thisNote = (0, _jquery2.default)(e.target).parents("li");
+      if (thisNote.data("state") == "editable") {
+        this.makeNoteReadOnly(thisNote);
+      } else {
+        this.makeNoteEditable(thisNote);
+      }
+    }
+  }, {
+    key: "makeNoteEditable",
+    value: function makeNoteEditable(thisNote) {
+      thisNote.find(".edit-note").html('<i class="fa fa-times" aria-hidden="true"></i> Cancel');
+      thisNote.find(".note-title-field, .note-body-field").removeAttr("readonly").addClass("note-active-field");
+      thisNote.find(".update-note").addClass("update-note--visible");
+      thisNote.data("state", "editable");
+    }
+  }, {
+    key: "makeNoteReadOnly",
+    value: function makeNoteReadOnly(thisNote) {
+      thisNote.find(".edit-note").html('<i class="fa fa-pencil" aria-hidden="true"></i> Edit');
+      thisNote.find(".note-title-field, .note-body-field").attr("readonly", "readonly").removeClass("note-active-field");
+      thisNote.find(".update-note").removeClass("update-note--visible");
+      thisNote.data("state", "cancel");
+    }
+  }, {
+    key: "deleteNote",
+    value: function deleteNote(e) {
+      var thisNote = (0, _jquery2.default)(e.target).parents("li");
+
+      _jquery2.default.ajax({
+        beforeSend: function beforeSend(xhr) {
+          xhr.setRequestHeader('X-WP-Nonce', collegeData.nonce);
+        },
+        url: collegeData.root_url + '/wp-json/wp/v2/note/' + thisNote.data('id'),
+        type: 'DELETE',
+        success: function success(response) {
+          thisNote.slideUp();
+          console.log("Congrats");
+          console.log(response);
+        },
+        error: function error(response) {
+          console.log("Sorry");
+          console.log(response);
+        }
+      });
+    }
+  }, {
+    key: "updateNote",
+    value: function updateNote(e) {
+      var _this = this;
+
+      var thisNote = (0, _jquery2.default)(e.target).parents("li");
+
+      var ourUpdatedPost = {
+        'title': thisNote.find(".note-title-field").val(),
+        'content': thisNote.find(".note-body-field").val()
+      };
+
+      _jquery2.default.ajax({
+        beforeSend: function beforeSend(xhr) {
+          xhr.setRequestHeader('X-WP-Nonce', collegeData.nonce);
+        },
+        url: collegeData.root_url + '/wp-json/wp/v2/note/' + thisNote.data('id'),
+        type: 'POST',
+        data: ourUpdatedPost,
+        success: function success(response) {
+          _this.makeNoteReadOnly(thisNote);
+          console.log("Congrats");
+          console.log(response);
+        },
+        error: function error(response) {
+          console.log("Sorry");
+          console.log(response);
+        }
+      });
+    }
+  }, {
+    key: "createNote",
+    value: function createNote(e) {
+      var ourNewPost = {
+        'title': (0, _jquery2.default)(".new-note-title").val(),
+        'content': (0, _jquery2.default)(".new-note-body").val(),
+        'status': 'publish'
+      };
+
+      _jquery2.default.ajax({
+        beforeSend: function beforeSend(xhr) {
+          xhr.setRequestHeader('X-WP-Nonce', collegeData.nonce);
+        },
+        url: collegeData.root_url + '/wp-json/wp/v2/note/',
+        type: 'POST',
+        data: ourNewPost,
+        success: function success(response) {
+          (0, _jquery2.default)(".new-note-title, .new-note-body").val('');
+          (0, _jquery2.default)("\n          <li data-id=\"" + response.id + "\">\n            <input readonly class=\"note-title-field\" value=\"" + response.title.raw + "\">\n            <span class=\"edit-note\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> Edit</span>\n            <span class=\"delete-note\"><i class=\"fa fa-trash-o\" aria-hidden=\"true\"></i> Delete</span>\n            <textarea readonly class=\"note-body-field\">" + response.content.raw + "</textarea>\n            <span class=\"update-note btn btn--blue btn--small\"><i class=\"fa fa-arrow-right\" aria-hidden=\"true\"></i> Save</span>\n          </li>\n          ").prependTo("#my-notes").hide().slideDown();
+
+          console.log("Congrats");
+          console.log(response);
+        },
+        error: function error(response) {
+          if (response.responseText == " You have reached your note limit.") {
+            (0, _jquery2.default)(".note-limit-message").addClass("active");
+          }
+          console.log("Sorry");
+          console.log(response);
+        }
+      });
+    }
+  }]);
+
+  return MyNotes;
+}();
+
+exports.default = MyNotes;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10598,7 +10855,7 @@ var Search = function () {
             this.resultsDiv.html('<div class="spinner-loader"></div>');
             this.isSpinnerVisible = true;
           }
-          this.typingTimer = setTimeout(this.getResults.bind(this), 750);
+          this.typingTimer = setTimeout(this.getResults.bind(this), 400);
         } else {
           this.resultsDiv.html('');
           this.isSpinnerVisible = false;
@@ -10619,9 +10876,9 @@ var Search = function () {
         }).join('') + "\n          " + (results.programs.length ? '</ul>' : '') + "\n          <h2 class=\"search-overlay__section-title\">Professors</h2>\n          " + (results.professors.length ? '<ul class="professor-cards">' : '<p>No Professor matches that search.</p>') + "\n          " + results.professors.map(function (item) {
           return "\n            <li class=\"professor-card__list-item\">\n              <a class=\"professor-card\" href=\"" + item.permalink + "\">\n                <img class=\"professor-card__image\" src=\"" + item.image + "\">\n                <span class=\"professor-card__name\" >" + item.title + "</span>\n              </a>\n            </li>\n\n            ";
         }).join('') + "\n          " + (results.professors.length ? '</ul>' : '') + "\n        </div>\n        <div class=\"one-third\">\n          <h2 class=\"search-overlay__section-title\">Campuses</h2>\n          " + (results.campuses.length ? '<ul class="link-list min-list">' : "<p>No Campus matches that search.<a href=\"" + collegeData.root_url + "/campuses\">View All Campuses</a></p>") + "\n          " + results.campuses.map(function (item) {
-          return "<li><a href=\"" + item.permalink + "\">" + item.title + "</a> " + (item.postType == 'post' ? "by " + item.authorName : ' ') + "</li>";
+          return "<li><a href=\"" + item.permalink + "\">" + item.title + "</a></li>";
         }).join('') + "\n          " + (results.campuses.length ? '</ul>' : '') + "\n          <h2 class=\"search-overlay__section-title\">Events</h2>\n          " + (results.events.length ? '' : "<p>No Event matches that search.<a href=\"" + collegeData.root_url + "/events\">View All Events</a></p>") + "\n          " + results.events.map(function (item) {
-          return "\n            <div class=\"event-summary\">\n              <a class=\"event-summary__date t-center\" href=\"" + item.permalink + "\">\n                <span class=\"event-summary__month\">" + item.month + "</span>\n                <span class=\"event-summary__day\">" + item.day + "</span>\n              </a>\n              <div class=\"event-summary__content\">\n                <h5 class=\"event-summary__title headline headline--tiny\"><a href=\"" + item.permalink + "\">" + item.title + "</a></h5>\n                <p><?php if (has_excerpt()) {\n                  echo get_the_excerpt();\n                }else{\n                  echo wp_trim_words(get_the_content(), 20);\n                } ?><a href=\"<?php the_permalink(); ?>\" class=\"nu gray\">Learn more</a></p>\n              </div>\n            </div>\n\n            ";
+          return "\n            <div class=\"event-summary\">\n              <a class=\"event-summary__date t-center\" href=\"" + item.permalink + "\">\n                <span class=\"event-summary__month\">" + item.month + "</span>\n                <span class=\"event-summary__day\">" + item.day + "</span>\n              </a>\n              <div class=\"event-summary__content\">\n                <h5 class=\"event-summary__title headline headline--tiny\"><a href=\"" + item.permalink + "\">" + item.title + "</a></h5>\n                <p>\n                " + item.description + "<a href=\"" + item.permalink + "\" class=\"nu gray\">Learn more</a></p>\n              </div>\n            </div>\n\n            ";
         }).join('') + "\n\n        </div>\n        </div>\n        ");
         _this.isSpinnerVisible = false;
       });
@@ -10649,6 +10906,7 @@ var Search = function () {
       }, 301);
       console.log("Our open method just ran");
       this.isOverlayOpen = true;
+      return false;
     }
   }, {
     key: "closeOverlay",
@@ -10661,7 +10919,7 @@ var Search = function () {
   }, {
     key: "addSearchHTML",
     value: function addSearchHTML() {
-      (0, _jquery2.default)("body").append("\n      <div class=\"search-overlay\">\n        <div class=\"search-overlay__top\">\n          <div class=\"container\">\n            <i class=\"fa fa-search search-overlay__icon\" aria-hidden=\"true\"></i>\n            <input type=\"text\" class=\"search-term\" placeholder=\"What are you looking for?\" id=\"search-term\">\n            <i class=\"fa fa-window-close search-overlay__close\" aria-hidden=\"true\"></i>\n          </div>\n        </div>\n        <div class=\"container\">\n          <div id=\"search-overlay__results\"></div>\n        </div>\n\n      </div>\n      ");
+      (0, _jquery2.default)("body").append("\n      <div class=\"search-overlay\">\n        <div class=\"search-overlay__top\">\n          <div class=\"container\">\n            <i class=\"fa fa-search search-overlay__icon\" aria-hidden=\"true\"></i>\n            <input type=\"text\" class=\"search-term\" placeholder=\"What are you looking for?\" id=\"search-term\">\n            <i class=\"fa fa-window-close search-overlay__close\" aria-hidden=\"true\"></i>\n          </div>\n        </div>\n        <div class=\"container\">\n          <div id=\"search-overlay__results\"></div>\n        </div>\n      </div>\n      ");
     }
   }]);
 
@@ -10671,7 +10929,7 @@ var Search = function () {
 exports.default = Search;
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -13572,7 +13830,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13582,11 +13840,11 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _slickCarousel = __webpack_require__(5);
+var _slickCarousel = __webpack_require__(7);
 
 var _slickCarousel2 = _interopRequireDefault(_slickCarousel);
 
-var _MobileMenu = __webpack_require__(3);
+var _MobileMenu = __webpack_require__(4);
 
 var _MobileMenu2 = _interopRequireDefault(_MobileMenu);
 
@@ -13598,9 +13856,17 @@ var _GoogleMap = __webpack_require__(1);
 
 var _GoogleMap2 = _interopRequireDefault(_GoogleMap);
 
-var _Search = __webpack_require__(4);
+var _Search = __webpack_require__(6);
 
 var _Search2 = _interopRequireDefault(_Search);
+
+var _MyNotes = __webpack_require__(5);
+
+var _MyNotes2 = _interopRequireDefault(_MyNotes);
+
+var _Like = __webpack_require__(3);
+
+var _Like2 = _interopRequireDefault(_Like);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13613,6 +13879,8 @@ var mobileMenu = new _MobileMenu2.default();
 var heroSlider = new _HeroSlider2.default();
 var googleMap = new _GoogleMap2.default();
 var magicalSearch = new _Search2.default();
+var mynotes = new _MyNotes2.default();
+var like = new _Like2.default();
 
 /***/ })
 /******/ ]);

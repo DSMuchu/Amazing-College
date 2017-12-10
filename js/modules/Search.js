@@ -34,7 +34,7 @@ if (this.searchField.val()) {
     this.resultsDiv.html('<div class="spinner-loader"></div>');
     this.isSpinnerVisible = true;
   }
-  this.typingTimer = setTimeout(this.getResults.bind(this), 750);
+  this.typingTimer = setTimeout(this.getResults.bind(this), 400);
 }else {
   this.resultsDiv.html('');
   this.isSpinnerVisible = false;
@@ -75,7 +75,7 @@ if (this.searchField.val()) {
         <div class="one-third">
           <h2 class="search-overlay__section-title">Campuses</h2>
           ${results.campuses.length ? '<ul class="link-list min-list">' : `<p>No Campus matches that search.<a href="${collegeData.root_url}/campuses">View All Campuses</a></p>`}
-          ${results.campuses.map(item => `<li><a href="${item.permalink}">${item.title}</a> ${item.postType == 'post'? `by ${item.authorName}`: ' '}</li>`).join('')}
+          ${results.campuses.map(item => `<li><a href="${item.permalink}">${item.title}</a></li>`).join('')}
           ${results.campuses.length ? '</ul>' : ''}
           <h2 class="search-overlay__section-title">Events</h2>
           ${results.events.length ? '' : `<p>No Event matches that search.<a href="${collegeData.root_url}/events">View All Events</a></p>`}
@@ -87,11 +87,8 @@ if (this.searchField.val()) {
               </a>
               <div class="event-summary__content">
                 <h5 class="event-summary__title headline headline--tiny"><a href="${item.permalink}">${item.title}</a></h5>
-                <p><?php if (has_excerpt()) {
-                  echo get_the_excerpt();
-                }else{
-                  echo wp_trim_words(get_the_content(), 20);
-                } ?><a href="<?php the_permalink(); ?>" class="nu gray">Learn more</a></p>
+                <p>
+                ${item.description}<a href="${item.permalink}" class="nu gray">Learn more</a></p>
               </div>
             </div>
 
@@ -121,6 +118,7 @@ if (this.searchField.val()) {
     setTimeout(() => this.searchField.focus(), 301);
     console.log("Our open method just ran");
     this.isOverlayOpen = true;
+    return false;
   }
 
   closeOverlay() {
@@ -129,6 +127,7 @@ if (this.searchField.val()) {
     console.log("Our close method just ran");
     this.isOverlayOpen = false;
   }
+
   addSearchHTML() {
     $("body").append(`
       <div class="search-overlay">
@@ -142,7 +141,6 @@ if (this.searchField.val()) {
         <div class="container">
           <div id="search-overlay__results"></div>
         </div>
-
       </div>
       `);
   }
